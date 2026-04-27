@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, Lock, Eye, EyeOff } from 'lucide-react';
 
-const ADMIN_USER = 'newildanr';
-const ADMIN_PASS = 'Borobudur5!!';
+const ADMIN_USER = 'Admin';
+const ADMIN_PASS = '123';
 
 export default function LoginPage() {
   const router = useRouter();
