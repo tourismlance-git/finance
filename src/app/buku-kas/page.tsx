@@ -122,8 +122,12 @@ export default function BukuKasPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Yakin ingin menghapus transaksi ini?')) return;
     try {
-      await api.deleteTransaksi(id);
-      setTransactions(transactions.filter(t => t.id !== id));
+      const result = await api.deleteTransaksi(id);
+      if (!result.success) {
+        alert('Gagal menghapus: ' + (result.message || 'Unknown error'));
+        return;
+      }
+      setTransactions(prev => prev.filter(t => t.id !== id));
     } catch (err: any) {
       alert('Gagal menghapus transaksi: ' + err.message);
     }
