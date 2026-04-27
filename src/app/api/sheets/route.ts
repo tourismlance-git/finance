@@ -12,13 +12,13 @@ const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID || '1ip9jldvaDt1da2wNyqqrZpIl
 
 // Internal table name -> Google Sheets sheet name
 const SHEET_MAP: Record<string, string> = {
-  Transaksi: 'Buku Kas',
+  Transaksi: 'Transaksi',
   Rekening: 'Rekening',
   Kategori: 'Kategori',
 };
 
 const CORRECT_HEADERS: Record<string, string[]> = {
-  'Buku Kas': ['id', 'tanggal', 'deskripsi', 'kategori', 'jumlah', 'tipe'],
+  Transaksi: ['id', 'tanggal', 'deskripsi', 'kategori', 'jumlah', 'tipe'],
   Rekening: ['id', 'nama', 'nomor', 'saldo', 'jenis'],
   Kategori: ['id', 'nama', 'tipe'],
 };
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
       const sheets = google.sheets({ version: 'v4', auth });
 
       const [transResult, rekeningResult] = await Promise.all([
-        sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: 'Buku Kas!A:Z' }),
+        sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: 'Transaksi!A:Z' }),
         sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: 'Rekening!A:Z' }),
       ]);
 
