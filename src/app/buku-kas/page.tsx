@@ -36,6 +36,8 @@ export default function BukuKasPage() {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [editId, setEditId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,17 +121,25 @@ export default function BukuKasPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Yakin ingin menghapus transaksi ini?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteId) return;
+    setShowDeleteModal(false);
     try {
-      const result = await api.deleteTransaksi(id);
+      const result = await api.deleteTransaksi(deleteId);
       if (!result.success) {
         alert('Gagal menghapus: ' + (result.message || 'Unknown error'));
         return;
       }
-      setTransactions(prev => prev.filter(t => t.id !== id));
+      setTransactions(prev => prev.filter(t => t.id !== deleteId));
     } catch (err: any) {
       alert('Gagal menghapus transaksi: ' + err.message);
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -268,7 +278,7 @@ export default function BukuKasPage() {
                           <Edit2 size={16} />
                         </button>
                         <button 
-                          onClick={() => handleDelete(transaksi.id)}
+                          onClick={() => handleDeleteClick(transaksi.id)}
                           className="p-2 text-slate-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 size={16} />
@@ -435,6 +445,29 @@ export default function BukuKasPage() {
                   Import
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Hapus Transaksi</h3>
+            <p className="text-slate-500 mb-6">Yakin ingin menghapus transaksi ini? Tindakan ini tidak bisa dibatalkan.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowDeleteModal(false); setDeleteId(null); }}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Hapus
+              </button>
             </div>
           </div>
         </div>
